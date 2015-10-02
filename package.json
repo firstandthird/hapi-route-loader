@@ -1,0 +1,27 @@
+{
+  "name": "hapi-route-loader",
+  "version": "0.0.1",
+  "description": "Hapi plugin to auto load routes from a directory",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/firstandthird/hapi-route-loader.git"
+  },
+  "keywords": [
+    "hapi",
+    "routes"
+  ],
+  "author": "Greg Allen <code@firstandthird.com> (http://firstandthird.com/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/firstandthird/hapi-route-loader/issues"
+  },
+  "homepage": "https://github.com/firstandthird/hapi-route-loader#readme",
+  "dependencies": {
+    "glob": "^5.0.15",
+    "lodash": "^3.10.1"
+  }
+}
