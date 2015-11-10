@@ -6,7 +6,8 @@ var _ = require('lodash');
 var defaults = {
   path: process.cwd() + '/routes',
   base: '/',
-  verbose: false
+  verbose: false,
+  autoLoad: true
 };
 exports.register = function(server, options, next) {
 
@@ -70,6 +71,9 @@ exports.register = function(server, options, next) {
   };
 
   server.expose('load', load);
+  if (options.autoLoad === false) {
+    next();
+  }
   load(options, next);
 
 };
