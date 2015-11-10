@@ -18,10 +18,7 @@ exports.register = function(server, options, next) {
 
     fs.exists(settings.path, function(exists) {
       if (!exists) {
-        if (settings.verbose) {
-          server.log(['hapi-route-loader', 'debug'], { message: 'route directory doesn\'t exist', path: settings.path });
-        }
-        return next();
+        return done(new Error(settings.path + 'doesn\'t exist'));
       }
       fs.stat(settings.path, function(err, stat) {
 
