@@ -69,7 +69,7 @@ exports.register = function(server, options, next) {
 
   server.expose('load', load);
   if (options.autoLoad === false) {
-    next();
+    return next();
   }
   load(options, next);
 
