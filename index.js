@@ -35,28 +35,42 @@ exports.register = function(server, options, next) {
           if (err) {
             return done(err);
           }
-
           files.forEach(function(file) {
             var segment = file.replace(settings.path, '').split(path.sep);
-            segment.pop();
-            segment = segment.join('/');
-
+            if (segment){
+              segment.pop();
+              segment = segment.join('/');
+            }
             var routeObj = require(path.join(settings.path, file));
-
             _.forIn(routeObj, function(route) {
               var tmpPath = route.path || '';
-
+              // create base route if one is provided:
+              if ( (tmpPath=="/"||tmpPath=="") && settings.base){
+                  server.route({
+                    method: route.method,
+                    path:  settings.base,
+                    handler : route.handler
+                  });
+                  return;
+              }
+              // create root route
+              if (_.first(tmpPath)=='/' && settings.base){
+                server.route(route);
+                return;
+              }
+              // create an extended path
               route.path = _.trimRight(settings.base, '/');
-
               if (_.startsWith(tmpPath, '/')) {
                 route.path += tmpPath;
-              } else {
+              } else if (segment){
                 route.path += '/' + segment + '/' + _.trimLeft(tmpPath, '/');
+              } else {
+                route.path += '/' + tmpPath;
               }
-
               if (settings.verbose) {
                 server.log(['hapi-route-loader', 'debug'], { message: 'route loaded', route: route });
               }
+              if (route.path!=tmpPath)
               server.route(route);
             });
           });
