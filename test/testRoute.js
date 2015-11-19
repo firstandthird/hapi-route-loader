@@ -6,7 +6,7 @@ let Hapi = require('hapi');
 let request = require('request');
 
 let launchServer = function(server, port, options, done){
-  options.path= process.cwd() + "/test/routes";
+  options.path= __dirname + "/routes";
   server.connection({ port: port });
   server.register([{
     register: require('../'),
