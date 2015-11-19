@@ -6,7 +6,6 @@ let Hapi = require('hapi');
 let request = require('request');
 
 let launchServer = function(server, port, options, done){
-  // server = new Hapi.Server();
   server.connection({ port: port });
   server.register([{
     register: require('../'),
