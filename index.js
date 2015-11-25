@@ -9,8 +9,7 @@ var defaults = {
   verbose: false,
   autoLoad: true
 };
-exports.register = function(server, options, next) {
-
+module.exports = function(server,options, next){
   var load = function(options, done) {
     done = done || function() {};
     var settings = _.clone(options);
@@ -81,14 +80,9 @@ exports.register = function(server, options, next) {
     });
   };
 
-  server.expose('load', load);
   if (options.autoLoad === false) {
     return next();
   }
   load(options, next);
 
-};
-
-exports.register.attributes = {
-  pkg: require('./package.json')
 };

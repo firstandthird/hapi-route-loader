@@ -1,22 +1,22 @@
 'use strict'
+
+// todo: rewrite this in lab
+
+
 let chai = require('chai');
 let assert = chai.assert;
 let should = chai.should();
 let Hapi = require('hapi');
 let request = require('request');
+let routeLoader = require('../');
+
 
 let launchServer = function(server, port, options, done){
   options.path= __dirname + "/routes";
   server.connection({ port: port });
-  server.register([{
-    register: require('../'),
-    options :  options,
-  }
-  ], function (err) {
-    if (err) {
-      console.error('Failed to load plugin:', err);
+  routeLoader(server, options, function(err, result){
+    if (err)
       return done(err);
-    }
     server.start(function(err){
       if (err){
         console.log(err)
@@ -24,9 +24,8 @@ let launchServer = function(server, port, options, done){
       }
       done();
     });
-  });
+  })
 }
-
 
 describe('hapi-route-loader /dashboard base', function(done){
   let server = new Hapi.Server();
