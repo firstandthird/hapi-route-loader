@@ -9,8 +9,12 @@ var defaults = {
   verbose: false,
   autoLoad: true
 };
-exports.register = function(server, options, next) {
 
+exports.register = function(server, options, next) {
+  exports.routeLoader(server, options, next, true);
+}
+
+exports.routeLoader = function(server,options, next){
   var load = function(options, done) {
     done = done || function() {};
     var settings = _.clone(options);
@@ -81,7 +85,6 @@ exports.register = function(server, options, next) {
     });
   };
 
-  server.expose('load', load);
   if (options.autoLoad === false) {
     return next();
   }
