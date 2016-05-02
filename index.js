@@ -18,7 +18,8 @@ exports.register = function(server, options, next) {
 
     fs.exists(settings.path, function(exists) {
       if (!exists) {
-        return done(new Error(settings.path + 'doesn\'t exist'));
+        server.log(['hapi-route-loader', 'warning'], { message: 'path doesnt exist', path: settings.path });
+        return done();
       }
       fs.stat(settings.path, function(err, stat) {
 
@@ -26,7 +27,8 @@ exports.register = function(server, options, next) {
           return done(err);
         }
         if (!stat.isDirectory()) {
-          return done(new Error(settings.path + ' is not a directory'));
+          server.log(['hapi-route-loader', 'warning'], { message: 'path not a directory', path: settings.path });
+          return done();
         }
 
         glob('**/*.js', {
