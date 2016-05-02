@@ -1,4 +1,14 @@
 
+0.2.0 / 2016-05-02
+==================
+
+  * don't error if folder doesn't exist, just log a warning
+  * added hapi to devDependencies supports 'npm test' run from any directory
+  * now supports 'npm test'!
+  * added devDependencies for testing with mocha
+  * moved /routes folder for testing into the /test folder
+  * added mocha tests and test routes updated route-loader to handle base
+
 0.1.1 / 2015-11-11
 ==================
 
