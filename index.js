@@ -1,28 +1,29 @@
-var fs = require('fs');
-var glob = require('glob');
-var path = require('path');
-var _ = require('lodash');
+'use strict';
+const fs = require('fs');
+const glob = require('glob');
+const path = require('path');
+const _ = require('lodash');
 
-var defaults = {
-  path: process.cwd() + '/routes',
+const defaults = {
+  path: `${process.cwd()}/routes`,
   base: '/',
   verbose: false,
   autoLoad: true
 };
-exports.register = function(server, options, next) {
 
-  var load = function(options, done) {
-    done = done || function() {};
-    var settings = _.clone(options);
+exports.register = (server, options, next) => {
+  const load = (loadOptions, done) => {
+    const stub = () => {};
+    done = done || stub;
+    const settings = _.clone(loadOptions);
     _.defaults(settings, defaults);
 
-    fs.exists(settings.path, function(exists) {
+    fs.exists(settings.path, (exists) => {
       if (!exists) {
         server.log(['hapi-route-loader', 'warning'], { message: 'path doesnt exist', path: settings.path });
         return done();
       }
-      fs.stat(settings.path, function(err, stat) {
-
+      fs.stat(settings.path, (err, stat) => {
         if (err) {
           return done(err);
         }
@@ -33,30 +34,30 @@ exports.register = function(server, options, next) {
 
         glob('**/*.js', {
           cwd: settings.path
-        }, function(err, files) {
-          if (err) {
-            return done(err);
+        }, (globErr, files) => {
+          if (globErr) {
+            return done(globErr);
           }
-          files.forEach(function(file) {
-            var segment = file.replace(settings.path, '').split(path.sep);
-            if (segment){
+          files.forEach((file) => {
+            let segment = file.replace(settings.path, '').split(path.sep);
+            if (segment) {
               segment.pop();
               segment = segment.join('/');
             }
-            var routeObj = require(path.join(settings.path, file));
-            _.forIn(routeObj, function(route) {
-              var tmpPath = route.path || '';
+            const routeObj = require(path.join(settings.path, file));
+            _.forIn(routeObj, (route) => {
+              const tmpPath = route.path || '';
               // create base route if one is provided:
-              if ( (tmpPath=="/"||tmpPath=="") && settings.base){
-                  server.route({
-                    method: route.method,
-                    path:  settings.base,
-                    handler : route.handler
-                  });
-                  return;
+              if ((tmpPath === '/' || tmpPath === '') && settings.base) {
+                server.route({
+                  method: route.method,
+                  path: settings.base,
+                  handler: route.handler
+                });
+                return;
               }
               // create root route
-              if (_.first(tmpPath)=='/' && settings.base){
+              if (_.first(tmpPath) === '/' && settings.base) {
                 server.route(route);
                 return;
               }
@@ -64,19 +65,19 @@ exports.register = function(server, options, next) {
               route.path = _.trimRight(settings.base, '/');
               if (_.startsWith(tmpPath, '/')) {
                 route.path += tmpPath;
-              } else if (segment){
-                route.path += '/' + segment + '/' + _.trimLeft(tmpPath, '/');
+              } else if (segment) {
+                route.path += `/${segment}/${_.trimLeft(tmpPath, '/')}`;
               } else {
-                route.path += '/' + tmpPath;
+                route.path += `/${tmpPath}`;
               }
               if (settings.verbose) {
-                server.log(['hapi-route-loader', 'debug'], { message: 'route loaded', route: route });
+                server.log(['hapi-route-loader', 'debug'], { message: 'route loaded', route });
               }
-              if (route.path!=tmpPath)
-              server.route(route);
+              if (route.path !== tmpPath) {
+                server.route(route);
+              }
             });
           });
-
           done();
         });
       });
@@ -88,7 +89,6 @@ exports.register = function(server, options, next) {
     return next();
   }
   load(options, next);
-
 };
 
 exports.register.attributes = {
