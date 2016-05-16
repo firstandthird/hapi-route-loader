@@ -12,6 +12,10 @@ const defaults = {
 };
 
 exports.register = (server, options, next) => {
+  exports.routeLoader(server, options, next, true);
+};
+
+exports.routeLoader = (server, options, next) => {
   const load = (loadOptions, done) => {
     const stub = () => {};
     done = done || stub;
@@ -21,7 +25,7 @@ exports.register = (server, options, next) => {
     fs.exists(settings.path, (exists) => {
       if (!exists) {
         server.log(['hapi-route-loader', 'warning'], { message: 'path doesnt exist', path: settings.path });
-        return done();
+        return done(new Error(`${settings.path} doesn\'t exist`));
       }
       fs.stat(settings.path, (err, stat) => {
         if (err) {
@@ -84,7 +88,7 @@ exports.register = (server, options, next) => {
     });
   };
 
-  server.expose('load', load);
+  // server.expose('load', load);
   if (options.autoLoad === false) {
     return next();
   }
