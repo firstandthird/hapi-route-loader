@@ -30,7 +30,7 @@ describe('hapi-route-loader /dashboard base', () => {
     launchServer(server, port, options, done);
   });
   after((done) => {
-    server.stop((err) => {
+    server.stop(() => {
       done();
     });
   });
@@ -71,7 +71,7 @@ describe('hapi-route-loader / base', () => {
     });
   });
   after((done) => {
-    server.stop((err) => {
+    server.stop(() => {
       done();
     });
   });
@@ -92,7 +92,7 @@ describe('hapi-route-loader /dashboard/ base', () => {
     });
   });
   after((done) => {
-    server.stop((err) => {
+    server.stop(() => {
       done();
     });
   });
