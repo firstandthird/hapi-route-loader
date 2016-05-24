@@ -36,18 +36,21 @@ describe('hapi-route-loader /dashboard base', () => {
   });
   it('base: /dashboard, path: get => /dashboard/get', (done) => {
     request.get('http://localhost:8080/dashboard/get', (err, response) => {
+      assert(err === null);
       assert(response.body === '/get', 'dashboard/get works');
       done();
     });
   });
   it('base: /dashboard, path: null => /dashboard', (done) => {
     request.get('http://localhost:8080/dashboard', (err, response) => {
+      assert(err === null);
       assert(response.body === '/', '/dashboard as base');
       done();
     });
   });
   it('base: /dashboard, path: {id} => /dashboard/{id}', (done) => {
     request.get('http://localhost:8080/dashboard/testId', (err, response) => {
+      assert(err === null);
       assert(response.body === 'testId', 'param passed correctly');
       done();
     });
@@ -77,6 +80,7 @@ describe('hapi-route-loader / base', () => {
   });
   it(' base: "/", path: "/dashboard" => "/dashboard"', (done) => {
     request.get('http://localhost:8081/dashboard', (err, response) => {
+      assert(err === null);
       assert(response.body === '/dashboard', '/dashboard as base');
       done();
     });
@@ -98,12 +102,14 @@ describe('hapi-route-loader /dashboard/ base', () => {
   });
   it('base: /dashboard/, path: null => /dashboard/', (done) => {
     request.get('http://localhost:8082/dashboard/', (err, response) => {
+      assert(err === null);
       assert(response.body === '/', '/dashboard/ works');
       done();
     });
   });
   it('base: "/dashboard/", path: "/user" => "/user"', (done) => {
     request.get('http://localhost:8082/user', (err, response) => {
+      assert(err === null);
       assert(response.body === '/user', 'user works');
       done();
     });
