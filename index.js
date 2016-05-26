@@ -25,16 +25,17 @@ exports.routeLoader = (server, options, next) => {
     fs.exists(settings.path, (exists) => {
       if (!exists) {
         server.log(['hapi-route-loader', 'warning'], { message: 'path does not exist', path: settings.path });
+        return done();
       }
       fs.stat(settings.path, (err, stat) => {
         if (err) {
-          return done(err);
+          server.log(['hapi-route-loader', 'warning'], { message: 'unable to read path', err, path: settings.path });
+          return done();
         }
         if (!stat.isDirectory()) {
           server.log(['hapi-route-loader', 'warning'], { message: 'path not a directory', path: settings.path });
           return done();
         }
-
         glob('**/*.js', {
           cwd: settings.path
         }, (globErr, files) => {
