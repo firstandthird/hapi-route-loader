@@ -12,6 +12,10 @@ const defaults = {
 };
 
 exports.register = (server, options, next) => {
+  exports.routeLoader(server, options, next, true);
+};
+
+exports.routeLoader = (server, options, next) => {
   const load = (loadOptions, done) => {
     const stub = () => {};
     done = done || stub;
@@ -83,8 +87,6 @@ exports.register = (server, options, next) => {
       });
     });
   };
-
-  server.expose('load', load);
   if (options.autoLoad === false) {
     return next();
   }
