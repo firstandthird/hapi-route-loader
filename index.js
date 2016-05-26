@@ -29,8 +29,7 @@ exports.routeLoader = (server, options, next) => {
       }
       fs.stat(settings.path, (err, stat) => {
         if (err) {
-          server.log(['hapi-route-loader', 'warning'], { message: 'unable to read path', err, path: settings.path });
-          return done();
+          return done(err);
         }
         if (!stat.isDirectory()) {
           server.log(['hapi-route-loader', 'warning'], { message: 'path not a directory', path: settings.path });
