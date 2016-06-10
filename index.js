@@ -54,6 +54,7 @@ exports.routeLoader = (server, options, next) => {
               // create base route if one is provided:
               if ((tmpPath === '/' || tmpPath === '') && settings.base) {
                 server.route({
+                  config: route.config,
                   method: route.method,
                   path: settings.base,
                   handler: route.handler
