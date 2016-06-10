@@ -1,4 +1,11 @@
 
+1.0.1 / 2016-06-10
+==================
+
+  * config.pre options now works for '/' paths
+  * added readme with travisci badge, travisci covers nodes 4,5,6
+  * travisci
+
 1.0.0 / 2016-05-30
 ==================
 
