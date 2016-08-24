@@ -76,6 +76,13 @@ describe('hapi-route-loader / base', () => {
       done();
     });
   });
+  it("will preserve the config: pre: [] option for routes", (done) => {
+    request.post('http://localhost:8084/', {}, (err, response) => {
+      assert(err === null);
+      assert(response.body === 'preProcessed', 'config.pre is preserved');
+      done();
+    });
+  });
 });
 describe('hapi-route-loader /dashboard/ base', () => {
   const server = new Hapi.Server();
