@@ -50,6 +50,13 @@ exports.routeLoader = (server, options, next) => {
             }
             const routeObj = require(path.join(settings.path, file));
             _.forIn(routeObj, (route) => {
+              if (options.globalConfig) {
+                if (route.config) {
+                  route.config = _.defaults(options.globalConfig, route.config);
+                } else {
+                  route.config = options.globalConfig;
+                }
+              }
               const tmpPath = route.path || '';
               // create base route if one is provided:
               if ((tmpPath === '/' || tmpPath === '') && settings.base) {
