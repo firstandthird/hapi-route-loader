@@ -50,11 +50,11 @@ exports.routeLoader = (server, options, next) => {
             }
             const routeObj = require(path.join(settings.path, file));
             _.forIn(routeObj, (route) => {
-              if (options.globalConfig) {
+              if (options.routeConfig) {
                 if (route.config) {
-                  route.config = _.defaults(options.globalConfig, route.config);
+                  route.config = _.defaults(options.routeConfig, route.config);
                 } else {
-                  route.config = options.globalConfig;
+                  route.config = options.routeConfig;
                 }
               }
               const tmpPath = route.path || '';

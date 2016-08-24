@@ -22,7 +22,7 @@ const launchServer = function(server, port, options, done) {
   });
 };
 
-describe('hapi-route-loader lets you specify globalConfig object for all routes', () => {
+describe('hapi-route-loader lets you specify routeConfig object for all routes', () => {
   let count = 0;
   const server = new Hapi.Server();
   const port = 8080;
@@ -33,7 +33,7 @@ describe('hapi-route-loader lets you specify globalConfig object for all routes'
   const options = {
     base: '/dashboard',
     // will merge with all route configs:
-    globalConfig: {
+    routeConfig: {
       pre: [
          { method: pre1, assign: 'm1' },
       ]
