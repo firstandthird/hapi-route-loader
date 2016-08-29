@@ -28,11 +28,11 @@
     "chai": "^3.4.1",
     "hapi": "^11.1.1",
     "mocha": "^2.3.4",
-    "eslint": "^2.9.0",
-    "eslint-config-airbnb": "^8.0.0",
-    "eslint-config-firstandthird": "^2.0.0",
+    "eslint": "^3.4.0",
+    "eslint-config-airbnb": "^10.0.1",
+    "eslint-config-firstandthird": "^2.2.0",
     "eslint-plugin-import": "^1.5.0",
-    "eslint-plugin-react": "^5.1.1",
+    "eslint-plugin-react": "^6.1.2",
     "request": "^2.67.0"
   }
 }
