@@ -42,3 +42,21 @@ exports.user = {
     reply("/user");
   }
 };
+
+exports.vhostRoutes = {
+  method: 'GET',
+  path: '/',
+  vhost: ['site.dev', 'site.com'],
+  handler: function(request, reply) {
+    reply('hello');
+  }
+};
+
+exports.vhostRoutes2 = {
+  method: 'GET',
+  path: '/',
+  vhost: ['notasite.dev', 'notasite.com'],
+  handler: function(request, reply) {
+    reply('goodbye');
+  }
+};
