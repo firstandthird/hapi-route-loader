@@ -64,6 +64,7 @@ exports.routeLoader = (server, options, next) => {
                   config: route.config,
                   method: route.method,
                   path: settings.base,
+                  vhost: route.vhost,
                   handler: route.handler
                 });
                 return;
