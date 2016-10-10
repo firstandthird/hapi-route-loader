@@ -44,12 +44,20 @@ exports.routeLoader = (server, options, next) => {
           }
           files.forEach((file) => {
             let segment = file.replace(settings.path, '').split(path.sep);
+            console.log('+++ so segment is')
+            console.log(segment)
+            console.log('because path was %s', settings.path)
             if (segment) {
               segment.pop();
               segment = segment.join('/');
             }
+            console.log('and in the end segment was')
+            console.log(segment)
+            // what you need to do is make segment work or get the dirname of settings.path
             const routeObj = require(path.join(settings.path, file));
             _.forIn(routeObj, (route) => {
+              // console.log('+')
+              // console.log(path.dirname(`${file}/${route.path}`));
               if (options.routeConfig) {
                 if (route.config) {
                   route.config = _.defaults(options.routeConfig, route.config);
@@ -87,6 +95,8 @@ exports.routeLoader = (server, options, next) => {
                 server.log(['hapi-route-loader', 'debug'], { message: 'route loaded', route });
               }
               if (route.path !== tmpPath) {
+                console.log('*')
+                console.log(route)
                 server.route(route);
               }
             });
