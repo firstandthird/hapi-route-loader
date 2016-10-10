@@ -1,4 +1,10 @@
 
+1.2.0 / 2016-09-05
+==================
+
+  * fixes package manifest for eslint
+  * can handle vhost parameter
+
 1.1.0 / 2016-08-24
 ==================
 
