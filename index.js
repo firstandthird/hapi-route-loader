@@ -15,6 +15,46 @@ exports.register = (server, options, next) => {
   exports.routeLoader(server, options, next, true);
 };
 
+// gets the root of the full route name for a given module of routes
+// individual routes in this file are appended to this base to get the final endpoint
+// eg "/api/folder1/myfile.js" will return "/api/folder/myfile/"
+const deriveRouteBase = (options, settings, fileName) => {
+  let segment = file.replace(settings.path, '').split(path.sep);
+  if (segment) {
+    segment.pop();
+    segment = segment.join('/');
+  }
+};
+
+// get the full route config for an individual route:
+const processRouteConfig = (options, basePath, originalRouteConfig) => {
+  if (options.routeConfig) {
+    if (originalRouteConfig.config) {
+      originalRouteConfig.config = _.defaults(options.routeConfig, originalRouteConfig.config);
+    } else {
+      originalRouteConfig.config = options.routeConfig;
+    }
+  }
+  let tmpPath = originalRouteConfig.path || '';
+  originalRouteConfig.path = basePath ? `${basePath}/${tmpPath}` : tmpPath;
+  // create extension if that is required
+  if ((tmpPath === '' || _.first(tmpPath) !== '/') && segment) {
+    tmpPath = `${segment}/${tmpPath}`;
+  }
+};
+
+// returns a list containing the route Configs for a file:
+const listRoutes = (options, settings, fileName) => {
+  const allRoutes = [];
+  const base = deriveRouteBase(options, settings, fileName)
+  const moduleRoutes = require(path.join(settings.path, fileName));
+  _.forIn(moduleRoutes, (originalRouteConfig) => {
+    const processedRouteConfig = processRouteConfig(options, originalRouteConfig);
+    processedRouteConfig.path = ``
+    allRoutes.push(processedRouteConfig);
+  });
+};
+
 exports.routeLoader = (server, options, next) => {
   const load = (loadOptions, done) => {
     const stub = () => {};
@@ -43,52 +83,37 @@ exports.routeLoader = (server, options, next) => {
             return done(globErr);
           }
           files.forEach((file) => {
-            let segment = file.replace(settings.path, '').split(path.sep);
-            if (segment) {
-              segment.pop();
-              segment = segment.join('/');
-            }
-            const routeObj = require(path.join(settings.path, file));
-            _.forIn(routeObj, (route) => {
-              if (options.routeConfig) {
-                if (route.config) {
-                  route.config = _.defaults(options.routeConfig, route.config);
-                } else {
-                  route.config = options.routeConfig;
-                }
-              }
-              const tmpPath = route.path || '';
+            listRoutes(options, settings, file).forEach((routeConfig) => {
+              server.route(routeConfig);
+            });
               // create base route if one is provided:
               if ((tmpPath === '/' || tmpPath === '') && settings.base) {
-                server.route({
+                console.log('^^')
+                console.log(route)
+                console.log('^^')
+                console.log('base is %s', settings.base)
+                return server.route({
                   config: route.config,
                   method: route.method,
                   path: settings.base,
                   vhost: route.vhost,
                   handler: route.handler
                 });
-                return;
               }
               // create root route
               if (_.first(tmpPath) === '/' && settings.base) {
-                server.route(route);
-                return;
+                return server.route(route);
               }
               // create an extended path
-              route.path = _.trimRight(settings.base, '/');
-              if (_.startsWith(tmpPath, '/')) {
-                route.path += tmpPath;
-              } else if (segment) {
-                route.path += `/${segment}/${_.trimLeft(tmpPath, '/')}`;
-              } else {
-                route.path += `/${tmpPath}`;
-              }
+              route.path = `${_.trimRight(settings.base, '/')}/${_.trimRight(tmpPath, '/')}`;
               if (settings.verbose) {
                 server.log(['hapi-route-loader', 'debug'], { message: 'route loaded', route });
               }
-              if (route.path !== tmpPath) {
-                server.route(route);
-              }
+              console.log('==========')
+              console.log('==========')
+              console.log('==========')
+              console.log(route)
+              return server.route(route);
             });
           });
           done();
