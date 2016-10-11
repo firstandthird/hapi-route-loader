@@ -1,3 +1,4 @@
+/* eslint-disable global-require */
 'use strict';
 const fs = require('fs');
 const glob = require('glob');
@@ -49,6 +50,7 @@ exports.routeLoader = (server, options, next) => {
               segment = segment.join('/');
             }
             const routeObj = require(path.join(settings.path, file));
+
             _.forIn(routeObj, (route) => {
               if (options.routeConfig) {
                 if (route.config) {
@@ -57,7 +59,12 @@ exports.routeLoader = (server, options, next) => {
                   route.config = options.routeConfig;
                 }
               }
-              const tmpPath = route.path || '';
+              let tmpPath = route.path || '';
+              // create extension if that is required
+              if ((tmpPath === '' || _.first(tmpPath) !== '/') && segment) {
+                tmpPath = `${segment}/${tmpPath}`;
+              }
+
               // create base route if one is provided:
               if ((tmpPath === '/' || tmpPath === '') && settings.base) {
                 server.route({
@@ -75,20 +82,11 @@ exports.routeLoader = (server, options, next) => {
                 return;
               }
               // create an extended path
-              route.path = _.trimRight(settings.base, '/');
-              if (_.startsWith(tmpPath, '/')) {
-                route.path += tmpPath;
-              } else if (segment) {
-                route.path += `/${segment}/${_.trimLeft(tmpPath, '/')}`;
-              } else {
-                route.path += `/${tmpPath}`;
-              }
+              route.path = `${_.trimRight(settings.base, '/')}/${_.trimRight(tmpPath, '/')}`;
               if (settings.verbose) {
                 server.log(['hapi-route-loader', 'debug'], { message: 'route loaded', route });
               }
-              if (route.path !== tmpPath) {
-                server.route(route);
-              }
+              server.route(route);
             });
           });
           done();
