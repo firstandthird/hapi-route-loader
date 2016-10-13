@@ -39,7 +39,7 @@ const getCompletePath = (options, fileName, originalPath) => {
   }
   // otherwise add the basePath to the returnPath:
   const basePath = getRoutePathBase(options, fileName);
-  let returnPath = path.join(basePath ? basePath : '', originalPath ? originalPath : '').replace(new RegExp('(\\\\)', 'g'), '/');
+  let returnPath = path.join(basePath, originalPath ? originalPath : '').replace(new RegExp('(\\\\)', 'g'), '/');
   // if there's a trailing slash, make sure it should be there:
   if (_.endsWith(returnPath, '/') && !_.endsWith(basePath, '/') && returnPath !== '/') {
     returnPath = returnPath.substr(0, returnPath.length - 1);
