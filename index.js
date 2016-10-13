@@ -31,16 +31,15 @@ const getRoutePathBase = (options, fileName) => {
   return `${base}${segment}`;
 };
 
-// get the full route path
-const getCompletePath = (options, fileName, extendedPath) => {
-  let returnPath = extendedPath;
-  const basePath = getRoutePathBase(options, fileName);
-  // if the extendedPath started with a slash just return it:
-  if (_.startsWith(returnPath, '/')) {
-    return returnPath;
+// get the full route path:
+const getCompletePath = (options, fileName, originalPath) => {
+  // if the originalPath started with a slash just return it, there is no basePath:
+  if (_.startsWith(originalPath, '/')) {
+    return originalPath;
   }
   // otherwise add the basePath to the returnPath:
-  returnPath = path.join(basePath ? basePath : '', returnPath ? returnPath : '').replace(new RegExp('(\\\\)', 'g'), '/');
+  const basePath = getRoutePathBase(options, fileName);
+  let returnPath = path.join(basePath ? basePath : '', originalPath ? originalPath : '').replace(new RegExp('(\\\\)', 'g'), '/');
   // if there's a trailing slash, make sure it should be there:
   if (_.endsWith(returnPath, '/') && !_.endsWith(basePath, '/') && returnPath !== '/') {
     returnPath = returnPath.substr(0, returnPath.length - 1);
