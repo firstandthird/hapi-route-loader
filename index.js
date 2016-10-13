@@ -48,22 +48,6 @@ const getCompletePath = (options, fileName, extendedPath) => {
   return returnPath;
 };
 
-// get the full route config for an individual route:
-const configureRoute = (options, fileName, originalRouteConfig) => {
-  // set up the various route config stuffs:
-  const processedRouteConfig = _.clone(originalRouteConfig);
-  if (options.routeConfig) {
-    if (originalRouteConfig.config) {
-      processedRouteConfig.config = _.defaults(options.routeConfig, originalRouteConfig.config);
-    } else {
-      processedRouteConfig.config = options.routeConfig;
-    }
-  }
-  // set up the route's path:
-  processedRouteConfig.path = getCompletePath(options, fileName, originalRouteConfig.path);
-  return processedRouteConfig;
-};
-
 exports.routeLoader = (server, options, next) => {
   const load = (loadOptions, loadDone) => {
     const stub = () => {};
@@ -102,14 +86,25 @@ exports.routeLoader = (server, options, next) => {
           done(null, files);
         });
       }],
-      // for each filename, get a list of the routes it defines:
+      // for each filename, get a list of configured routes defined by it
       configureAllRoutes: ['files', (results, done) => {
         const routeConfigs = {};
         results.files.forEach((fileName) => {
           const fileRouteList = [];
           const moduleRoutes = require(path.join(settings.path, fileName));
           _.forIn(moduleRoutes, (originalRouteConfig) => {
-            fileRouteList.push(configureRoute(settings, fileName, originalRouteConfig));
+            const processedRouteConfig = _.clone(originalRouteConfig);
+            // set up the route's 'config' option:
+            if (options.routeConfig) {
+              if (originalRouteConfig.config) {
+                processedRouteConfig.config = _.defaults(options.routeConfig, originalRouteConfig.config);
+              } else {
+                processedRouteConfig.config = options.routeConfig;
+              }
+            }
+            // set up the route's 'path' option:
+            processedRouteConfig.path = getCompletePath(options, fileName, originalRouteConfig.path);
+            fileRouteList.push(processedRouteConfig);
           });
           routeConfigs[fileName] = fileRouteList;
         });
