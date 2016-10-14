@@ -1,40 +1,25 @@
 'use strict';
 const chai = require('chai');
 const assert = chai.assert;
-const Hapi = require('hapi');
 const request = require('request');
-const routeLoader = require('../').routeLoader;
-
-const launchServer = function(server, port, options, done) {
-  options.path = `${__dirname}/routes`;
-  server.connection({ port });
-  routeLoader(server, options, (err) => {
-    if (err) {
-      return done(err);
-    }
-    server.start((startErr) => {
-      if (startErr) {
-        console.log(startErr);
-        return done(startErr);
-      }
-      done();
-    });
-  });
-};
-
+const setup = require('./setup.test.js');
 
 describe('hapi-route-loader /dashboard base', () => {
-  const server = new Hapi.Server();
-  const port = 8080;
-  const options = { base: '/dashboard' };
-  before((done) => {
-    launchServer(server, port, options, done);
-  });
-  after((done) => {
-    server.stop(() => {
+  let server;
+  const options = {
+    path: `${__dirname}/routes`,
+    base: '/dashboard'
+  };
+  beforeEach((done) => {
+    setup.setupServerModule(options, [], (err, returnedServer) => {
+      server = returnedServer;
       done();
     });
   });
+  afterEach((done) => {
+    server.stop(done);
+  });
+
   it('base: /dashboard, path: get => /dashboard/get', (done) => {
     request.get('http://localhost:8080/dashboard/get', (err, response) => {
       assert(err === null);
@@ -42,7 +27,7 @@ describe('hapi-route-loader /dashboard base', () => {
       done();
     });
   });
-
+/*
   it('base: /dashboard, path: null => /dashboard', (done) => {
     request.get('http://localhost:8080/dashboard', (err, response) => {
       assert(err === null);
@@ -57,8 +42,9 @@ describe('hapi-route-loader /dashboard base', () => {
       done();
     });
   });
+*/
 });
-
+/*
 describe('hapi-route-loader / base', () => {
   const server = new Hapi.Server();
   const port = 8081;
@@ -118,3 +104,4 @@ describe('hapi-route-loader /dashboard/ base', () => {
     });
   });
 });
+*/
