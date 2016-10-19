@@ -50,8 +50,7 @@ describe('hapi-route-loader lets you specify routeConfig object for all routes',
   it('base: /dashboard, path: get => /dashboard/get', (done) => {
     request.get('http://localhost:8080/dashboard/get', (err, response) => {
       assert(err === null);
-      console.log(response.body)
-      // assert(response.body === 'global!');
+      assert(response.body === 'global!');
       done();
     });
   });
