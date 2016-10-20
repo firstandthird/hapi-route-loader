@@ -4,6 +4,8 @@ const assert = chai.assert;
 const describe = require('mocha').describe;
 const afterEach = require('mocha').afterEach;
 const beforeEach = require('mocha').beforeEach;
+const before = require('mocha').before;
+const after = require('mocha').after;
 const it = require('mocha').it;
 const request = require('request');
 const Hapi = require('hapi');
@@ -21,7 +23,7 @@ const setupServerPlugin = (options, routes, callback) => {
     }
     server.start((err2) => {
       if (err2) {
-        console.log(err2);
+        throw err2;
       }
       routes.forEach((route) => {
         server.route(route);
@@ -37,13 +39,13 @@ describe('hapi-route-loader /dashboard base', () => {
     path: `${__dirname}/routes`,
     base: '/dashboard'
   };
-  beforeEach((done) => {
+  before((done) => {
     setupServerPlugin(options, [], (returnedServer) => {
       server = returnedServer;
       done();
     });
   });
-  afterEach((done) => {
+  after((done) => {
     server.stop(done);
   });
   it("base: '/dashboard', path: 'get' => '/dashboard/get'", (done) => {
@@ -155,7 +157,7 @@ describe('hapi-route-loader.routeLoader function will also load routes', () => {
       }
       server.start((err2) => {
         if (err2) {
-          console.log(err2);
+          throw err2;
         }
         done(err, server);
       });
