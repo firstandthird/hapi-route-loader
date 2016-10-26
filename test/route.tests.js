@@ -32,8 +32,7 @@ const setupServerPlugin = (options, routes, callback) => {
     });
   });
 };
-
-describe('hapi-route-loader omitted, undefined, or blank', () => {
+describe('hapi-route-loader base option omitted, undefined, or blank', () => {
   let server;
   it(" base: '', path: '/dashboard' => '/dashboard'", (done) => {
     const options = {
@@ -268,6 +267,23 @@ describe('hapi-route-loader lets you specify routeConfig object for all routes',
       assert(err === null);
       assert(response.body === 'global!');
       done();
+    });
+  });
+});
+
+describe('hapi-route-loader deeply nested route', () => {
+  let server;
+  it(" file: '/routes/api/test/test.js' => '/api/test'", (done) => {
+    const options = {
+      path: `${__dirname}/routes/`
+    };
+    setupServerPlugin(options, [], (returnedServer) => {
+      server = returnedServer;
+      request.get('http://localhost:8080/api/test', (err, response) => {
+        assert(err === null);
+        assert(response.body === '/nested', 'file /routes/api/test/test.js -> /api/test');
+        server.stop(done);
+      });
     });
   });
 });

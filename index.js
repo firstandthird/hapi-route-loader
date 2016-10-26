@@ -44,6 +44,9 @@ const getCompletePath = (options, fileName, originalPath) => {
   if (_.endsWith(returnPath, '/') && !_.endsWith(basePath, '/') && returnPath !== '/') {
     returnPath = returnPath.substr(0, returnPath.length - 1);
   }
+  if (_.startsWith(returnPath, '//')) {
+    returnPath = returnPath.replace('//', '/');
+  }
   return returnPath;
 };
 
