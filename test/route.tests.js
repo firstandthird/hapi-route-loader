@@ -33,6 +33,74 @@ const setupServerPlugin = (options, routes, callback) => {
   });
 };
 
+describe('hapi-route-loader omitted, undefined, or blank', () => {
+  let server;
+  it(" base: '', path: '/dashboard' => '/dashboard'", (done) => {
+    const options = {
+      base: '',
+      path: `${__dirname}/routes`
+    };
+    setupServerPlugin(options, [{
+      method: 'GET',
+      path: '/dashboard',
+      handler: (launchRequest, reply) => {
+        reply('/dashboard');
+      }
+    }], (returnedServer) => {
+      server = returnedServer;
+      request.get('http://localhost:8080/dashboard', (err, response) => {
+        assert(err === null);
+        assert(response.body === '/dashboard', '/dashboard as base');
+        server.stop();
+        done();
+      });
+    });
+  });
+
+  it(" base: undefined, path: '/dashboard' => '/dashboard'", (done) => {
+    const options = {
+      base: undefined,
+      path: `${__dirname}/routes`
+    };
+    setupServerPlugin(options, [{
+      method: 'GET',
+      path: '/dashboard',
+      handler: (launchRequest, reply) => {
+        reply('/dashboard');
+      }
+    }], (returnedServer) => {
+      server = returnedServer;
+      request.get('http://localhost:8080/dashboard', (err, response) => {
+        assert(err === null);
+        assert(response.body === '/dashboard', '/dashboard as base');
+        server.stop();
+        done();
+      });
+    });
+  });
+
+  it(" base omitted, path: '/dashboard' => '/dashboard'", (done) => {
+    const options = {
+      path: `${__dirname}/routes`
+    };
+    setupServerPlugin(options, [{
+      method: 'GET',
+      path: '/dashboard',
+      handler: (launchRequest, reply) => {
+        reply('/dashboard');
+      }
+    }], (returnedServer) => {
+      server = returnedServer;
+      request.get('http://localhost:8080/dashboard', (err, response) => {
+        assert(err === null);
+        assert(response.body === '/dashboard', '/dashboard as base');
+        server.stop();
+        done();
+      });
+    });
+  });
+});
+/*
 describe('hapi-route-loader /dashboard base', () => {
   let server;
   const options = {
@@ -88,9 +156,6 @@ describe('hapi-route-loader / base', () => {
       server = returnedServer;
       done();
     });
-  });
-  afterEach((done) => {
-    server.stop(done);
   });
   afterEach((done) => {
     server.stop(done);
@@ -209,3 +274,4 @@ describe('hapi-route-loader lets you specify routeConfig object for all routes',
     });
   });
 });
+*/
