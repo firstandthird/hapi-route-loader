@@ -51,8 +51,7 @@ describe('hapi-route-loader omitted, undefined, or blank', () => {
       request.get('http://localhost:8080/dashboard', (err, response) => {
         assert(err === null);
         assert(response.body === '/dashboard', '/dashboard as base');
-        server.stop();
-        done();
+        server.stop(done);
       });
     });
   });
@@ -73,8 +72,7 @@ describe('hapi-route-loader omitted, undefined, or blank', () => {
       request.get('http://localhost:8080/dashboard', (err, response) => {
         assert(err === null);
         assert(response.body === '/dashboard', '/dashboard as base');
-        server.stop();
-        done();
+        server.stop(done);
       });
     });
   });
@@ -94,13 +92,12 @@ describe('hapi-route-loader omitted, undefined, or blank', () => {
       request.get('http://localhost:8080/dashboard', (err, response) => {
         assert(err === null);
         assert(response.body === '/dashboard', '/dashboard as base');
-        server.stop();
-        done();
+        server.stop(done);
       });
     });
   });
 });
-/*
+
 describe('hapi-route-loader /dashboard base', () => {
   let server;
   const options = {
@@ -274,4 +271,3 @@ describe('hapi-route-loader lets you specify routeConfig object for all routes',
     });
   });
 });
-*/

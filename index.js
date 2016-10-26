@@ -21,7 +21,7 @@ exports.register = (server, options, next) => {
 const getRoutePathBase = (options, fileName) => {
   // gets relative path, minus absolute path specifier:
   const segment = path.dirname(fileName.replace(options.path, ''));
-  let base = options.base;
+  let base = options.base ? options.base : defaults.base;
   if (segment === '.' || !segment) {
     return base;
   }
