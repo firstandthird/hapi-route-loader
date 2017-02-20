@@ -1,12 +1,6 @@
 'use strict';
 const chai = require('chai');
 const assert = chai.assert;
-const describe = require('mocha').describe;
-const afterEach = require('mocha').afterEach;
-const beforeEach = require('mocha').beforeEach;
-const before = require('mocha').before;
-const after = require('mocha').after;
-const it = require('mocha').it;
 const request = require('request');
 const Hapi = require('hapi');
 const routeLoader = require('../');
