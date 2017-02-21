@@ -63,7 +63,7 @@ exports.routeLoader = (server, options, next) => {
         fs.exists(settings.path, (exists) => {
           if (!exists) {
             server.log(['hapi-route-loader', 'warning'], { message: 'path doesnt exist', path: settings.path });
-            return done(`path ${settings.path} does not exist`);
+            return done();
           }
           fs.stat(settings.path, (err, stat) => {
             if (err) {
