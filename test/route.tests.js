@@ -1,12 +1,7 @@
+/* eslint-disable no-undef*/
 'use strict';
 const chai = require('chai');
 const assert = chai.assert;
-const describe = require('mocha').describe;
-const afterEach = require('mocha').afterEach;
-const beforeEach = require('mocha').beforeEach;
-const before = require('mocha').before;
-const after = require('mocha').after;
-const it = require('mocha').it;
 const request = require('request');
 const Hapi = require('hapi');
 const routeLoader = require('../');
@@ -32,8 +27,9 @@ const setupServerPlugin = (options, routes, callback) => {
     });
   });
 };
-describe('hapi-route-loader base option omitted, undefined, or blank', () => {
+describe('hapi-route-loader base option omitted, undefined, blank, or does not exist', () => {
   let server;
+
   it(" base: '', path: '/dashboard' => '/dashboard'", (done) => {
     const options = {
       base: '',
@@ -79,6 +75,26 @@ describe('hapi-route-loader base option omitted, undefined, or blank', () => {
   it(" base omitted, path: '/dashboard' => '/dashboard'", (done) => {
     const options = {
       path: `${__dirname}/routes`
+    };
+    setupServerPlugin(options, [{
+      method: 'GET',
+      path: '/dashboard',
+      handler: (launchRequest, reply) => {
+        reply('/dashboard');
+      }
+    }], (returnedServer) => {
+      server = returnedServer;
+      request.get('http://localhost:8080/dashboard', (err, response) => {
+        assert(err === null);
+        assert(response.body === '/dashboard', '/dashboard as base');
+        server.stop(done);
+      });
+    });
+  });
+
+  it('base omitted, path does not exist', (done) => {
+    const options = {
+      path: 'no/no/no/no/nuh/to/the/uh/to/the/no/no/no/'
     };
     setupServerPlugin(options, [{
       method: 'GET',
@@ -270,7 +286,6 @@ describe('hapi-route-loader lets you specify routeConfig object for all routes',
     });
   });
 });
-
 describe('hapi-route-loader deeply nested route', () => {
   let server;
   it(" file: '/routes/api/test/test.js' => '/api/test'", (done) => {
