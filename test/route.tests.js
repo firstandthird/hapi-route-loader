@@ -51,7 +51,7 @@ describe('hapi-route-loader base option omitted, undefined, blank, or does not e
       });
     });
   });
-/*
+
   it(" base: undefined, path: '/dashboard' => '/dashboard'", (done) => {
     const options = {
       base: undefined,
@@ -112,9 +112,7 @@ describe('hapi-route-loader base option omitted, undefined, blank, or does not e
       });
     });
   });
-*/
 });
-/*
 describe('hapi-route-loader /dashboard base', () => {
   let server;
   const options = {
@@ -304,4 +302,3 @@ describe('hapi-route-loader deeply nested route', () => {
     });
   });
 });
-*/
