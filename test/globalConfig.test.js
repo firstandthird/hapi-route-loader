@@ -3,7 +3,7 @@ const chai = require('chai');
 const assert = chai.assert;
 const Hapi = require('hapi');
 const request = require('request');
-const routeLoader = require('../').routeLoader;
+const routeLoader = require('../lib/routeLoader');
 
 const launchServer = function(server, port, options, done) {
   options.path = `${__dirname}/globalConfigRoutes`;
