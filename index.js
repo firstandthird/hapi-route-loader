@@ -119,7 +119,7 @@ exports.routeLoader = (server, options, next) => {
             if (options.verbose) {
               server.log(['debug', 'hapi-route-loader'], { msg: 'registering', data: routeConfig });
             }
-            server.route(routeConfig);
+            server.root.route(routeConfig);
           });
         });
         done();
