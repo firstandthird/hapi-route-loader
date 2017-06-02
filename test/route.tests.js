@@ -4,13 +4,14 @@ const chai = require('chai');
 const assert = chai.assert;
 const request = require('request');
 const Hapi = require('hapi');
-const routeLoader = require('../');
+const hapiRouteLoader = require('../');
+const routeLoader = require('../lib/routeLoader');
 
 const setupServerPlugin = (options, routes, callback) => {
   const server = new Hapi.Server({});
   server.connection({ port: 8080 });
   server.register({
-    register: routeLoader,
+    register: hapiRouteLoader,
     options
   }, (err) => {
     if (err) {
@@ -50,7 +51,7 @@ describe('hapi-route-loader base option omitted, undefined, blank, or does not e
       });
     });
   });
-
+/*
   it(" base: undefined, path: '/dashboard' => '/dashboard'", (done) => {
     const options = {
       base: undefined,
@@ -111,8 +112,9 @@ describe('hapi-route-loader base option omitted, undefined, blank, or does not e
       });
     });
   });
+*/
 });
-
+/*
 describe('hapi-route-loader /dashboard base', () => {
   let server;
   const options = {
@@ -228,7 +230,7 @@ describe('hapi-route-loader.routeLoader function will also load routes', () => {
   beforeEach((done) => {
     server = new Hapi.Server({});
     server.connection({ port: 8080 });
-    routeLoader.routeLoader(server, options, (err) => {
+    routeLoader(server, options, (err) => {
       if (err) {
         return done(err);
       }
@@ -302,3 +304,4 @@ describe('hapi-route-loader deeply nested route', () => {
     });
   });
 });
+*/
