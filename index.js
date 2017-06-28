@@ -8,6 +8,7 @@ const async = require('async');
 const defaults = {
   path: `${process.cwd()}/routes`,
   base: '/',
+  prefix: '',
   verbose: false,
   autoLoad: true
 };
@@ -33,15 +34,22 @@ const getRoutePathBase = (options, fileName) => {
 
 // get the full route path:
 const getCompletePath = (options, fileName, originalPath) => {
+  const prefix = options.prefix ? options.prefix : defaults.prefix;
   // if the originalPath started with a slash just return it, there is no basePath:
   if (_.startsWith(originalPath, '/')) {
-    return originalPath;
+    let resultPath = `${prefix}${originalPath}`;
+    if (_.endsWith(resultPath, '/') && resultPath !== '/') {
+      resultPath = resultPath.substr(0, resultPath.length - 1);
+    }
+
+    return resultPath;
   }
   // otherwise add the basePath to the returnPath:
   const basePath = getRoutePathBase(options, fileName);
   let returnPath = path.join(basePath, originalPath ? originalPath : '').replace(new RegExp('(\\\\)', 'g'), '/');
+  returnPath = `${prefix}${returnPath}`;
   // if there's a trailing slash, make sure it should be there:
-  if (_.endsWith(returnPath, '/') && !_.endsWith(basePath, '/') && returnPath !== '/') {
+  if (_.endsWith(returnPath, '/') && (!_.endsWith(basePath, '/') || basePath === '/') && returnPath !== '/') {
     returnPath = returnPath.substr(0, returnPath.length - 1);
   }
   if (_.startsWith(returnPath, '//')) {

@@ -219,6 +219,37 @@ describe('hapi-route-loader /dashboard/ base', () => {
   });
 });
 
+describe('hapi-route-loader /prefix as prefix', () => {
+  let server;
+  const options = {
+    path: `${__dirname}/routes`,
+    verbose: true,
+    prefix: '/prefix'
+  };
+  beforeEach((done) => {
+    setupServerPlugin(options, [], (returnedServer) => {
+      server = returnedServer;
+      done();
+    });
+  });
+  afterEach((done) => {
+    server.stop(done);
+  });
+  it("base: '', prefix: '/prefix', path: null => 'prefix'", (done) => {
+    request.get('http://localhost:8080/prefix', (err, response) => {
+      assert(err === null);
+      assert(response.body === '/', '/dashboard/ works');
+      done();
+    });
+  });
+  it("base: undefined, prefix: '/prefix', path: '/user' => '/prefix/user'", (done) => {
+    request.get('http://localhost:8080/prefix/user', (err, response) => {
+      assert(err === null);
+      assert(response.body === '/user', 'user works');
+      done();
+    });
+  });
+});
 describe('hapi-route-loader.routeLoader function will also load routes', () => {
   let server;
   const options = {
