@@ -32,6 +32,7 @@ describe('hapi-route-loader lets you specify routeConfig object for all routes',
   }
   const options = {
     base: '/dashboard',
+    prefix: '/prefix',
     // will merge with all route configs:
     routeConfig: {
       pre: [
@@ -47,8 +48,8 @@ describe('hapi-route-loader lets you specify routeConfig object for all routes',
       done();
     });
   });
-  it('base: /dashboard, path: get => /dashboard/get', (done) => {
-    request.get('http://localhost:8080/dashboard/get', (err, response) => {
+  it('base: /dashboard, prefix: /prefix, path: get => /dashboard/get', (done) => {
+    request.get('http://localhost:8080/prefix/dashboard/get', (err, response) => {
       assert(err === null);
       assert(response.body === 'global!');
       done();
