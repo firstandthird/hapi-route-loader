@@ -192,6 +192,7 @@ describe('hapi-route-loader / base', () => {
 describe('hapi-route-loader can use function for config', () => {
   let server;
   const options = {
+    functionTestThingy: 'thingy',
     base: '/',
     path: `${__dirname}/functionRoutes`
   };
@@ -207,7 +208,7 @@ describe('hapi-route-loader can use function for config', () => {
   it(" base: '/', path: '/get' => '/get'", (done) => {
     request.get('http://localhost:8080/get', (err, response) => {
       assert(err === null);
-      assert(response.body === '/get', '/get as body');
+      assert(response.body === `${server.version},${options.functionTestThingy}`, 'routeConfig accepts server/settings and returns config');
       done();
     });
   });

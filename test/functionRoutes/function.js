@@ -1,9 +1,9 @@
-exports.get = function() {
+exports.get = function(server, settings) {
   return {
     method: 'GET',
     path: 'get',
     handler: function(request, reply) {
-      reply('/get');
+      reply(`${server.version},${settings.functionTestThingy}`);
     }
   };
 };
