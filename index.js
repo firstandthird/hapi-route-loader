@@ -103,6 +103,9 @@ exports.routeLoader = (server, options, next) => {
           const fileRouteList = [];
           const moduleRoutes = require(path.join(settings.path, fileName));
           _.forIn(moduleRoutes, (originalRouteConfig) => {
+            if (typeof originalRouteConfig === 'function') {
+              originalRouteConfig = originalRouteConfig(server, settings);
+            }
             const processedRouteConfig = _.clone(originalRouteConfig);
             // set up the route's 'config' option:
             if (options.routeConfig) {
