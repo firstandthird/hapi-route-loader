@@ -27,6 +27,7 @@ const setupServerPlugin = (options, routes, callback) => {
     });
   });
 };
+
 describe('hapi-route-loader base option omitted, undefined, blank, or does not exist', () => {
   let server;
 
@@ -183,6 +184,31 @@ describe('hapi-route-loader / base', () => {
     request.post('http://localhost:8080/', {}, (err, response) => {
       assert(err === null);
       assert(response.body === 'preProcessed', 'config.pre is preserved');
+      done();
+    });
+  });
+});
+
+describe('hapi-route-loader can use function for config', () => {
+  let server;
+  const options = {
+    functionTestThingy: 'thingy',
+    base: '/',
+    path: `${__dirname}/functionRoutes`
+  };
+  beforeEach((done) => {
+    setupServerPlugin(options, [], (returnedServer) => {
+      server = returnedServer;
+      done();
+    });
+  });
+  afterEach((done) => {
+    server.stop(done);
+  });
+  it(" base: '/', path: '/get' => '/get'", (done) => {
+    request.get('http://localhost:8080/get', (err, response) => {
+      assert(err === null);
+      assert(response.body === `${server.version},${options.functionTestThingy}`, 'routeConfig accepts server/settings and returns config');
       done();
     });
   });
