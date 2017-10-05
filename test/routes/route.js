@@ -5,6 +5,13 @@ exports.get = {
     reply('/get')
   }
 };
+exports.trailingslash = {
+  method: 'GET',
+  path: 'trailingslash/',
+  handler: function (request, reply) {
+    reply('/trailingslash/');
+  }
+};
 exports.none = {
   method: 'GET',
   path: null,

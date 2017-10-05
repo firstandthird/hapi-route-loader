@@ -51,6 +51,20 @@ describe('hapi-route-loader base option omitted, undefined, blank, or does not e
       });
     });
   });
+  it(" base: '', path: '/trailingslash/' => '/trailingslash/'", (done) => {
+    const options = {
+      base: '',
+      path: `${__dirname}/routes`
+    };
+    setupServerPlugin(options, [], (returnedServer) => {
+      server = returnedServer;
+      request.get('http://localhost:8080/trailingslash/', (err, response) => {
+        assert(err === null);
+        assert(response.body === '/trailingslash/', ' blank as base');
+        server.stop(done);
+      });
+    });
+  });
 
   it(" base: undefined, path: '/dashboard' => '/dashboard'", (done) => {
     const options = {
@@ -112,6 +126,27 @@ describe('hapi-route-loader base option omitted, undefined, blank, or does not e
       });
     });
   });
+
+  it(" base: '', path: '/dashboard/' => '/dashboard/'", (done) => {
+    const options = {
+      base: '',
+      path: `${__dirname}/routes`
+    };
+    setupServerPlugin(options, [{
+      method: 'GET',
+      path: '/dashboard/',
+      handler: (launchRequest, reply) => {
+        reply('/dashboard/');
+      }
+    }], (returnedServer) => {
+      server = returnedServer;
+      request.get('http://localhost:8080/dashboard/', (err, response) => {
+        assert(err === null);
+        assert(response.body === '/dashboard/', '/dashboard/ as base');
+        server.stop(done);
+      });
+    });
+  });
 });
 
 describe('hapi-route-loader /dashboard base', () => {
@@ -133,6 +168,13 @@ describe('hapi-route-loader /dashboard base', () => {
     request.get('http://localhost:8080/dashboard/get', (err, response) => {
       assert(err === null);
       assert(response.body === '/get', 'dashboard/get works');
+      done();
+    });
+  });
+  it("base: '/dashboard', path: 'trailingslash/' => '/dashboard/trailingslash/' with trailing slash", (done) => {
+    request.get('http://localhost:8080/dashboard/trailingslash/', (err, response) => {
+      assert(err === null);
+      assert(response.body === '/trailingslash/', 'dashboard/trailingslash/ works');
       done();
     });
   });
@@ -176,7 +218,14 @@ describe('hapi-route-loader / base', () => {
   it(" base: '/', path: '/dashboard' => '/dashboard'", (done) => {
     request.get('http://localhost:8080/dashboard', (err, response) => {
       assert(err === null);
-      assert(response.body === '/dashboard', '/dashboard as base');
+      assert(response.body === '/dashboard', '/ as base');
+      done();
+    });
+  });
+  it(" base: '/', path: '/trailingslash/' => '/trailingslash/'", (done) => {
+    request.get('http://localhost:8080/trailingslash/', (err, response) => {
+      assert(err === null);
+      assert(response.body === '/trailingslash/', '/dashboard as base');
       done();
     });
   });
@@ -236,6 +285,13 @@ describe('hapi-route-loader /dashboard/ base', () => {
       done();
     });
   });
+  it("base: '/dashboard/', path: null => '/dashboard/'", (done) => {
+    request.get('http://localhost:8080/dashboard/trailingslash/', (err, response) => {
+      assert(err === null);
+      assert(response.body === '/trailingslash/', '/dashboard/trailingslash/ works');
+      done();
+    });
+  });
   it("base: '/dashboard/', path: '/user' => '/user'", (done) => {
     request.get('http://localhost:8080/user', (err, response) => {
       assert(err === null);
@@ -268,6 +324,13 @@ describe('hapi-route-loader /prefix as prefix', () => {
       done();
     });
   });
+  it("base: '', prefix: '/prefix', path: trailingslash/ => 'prefix/trailingslash/'", (done) => {
+    request.get('http://localhost:8080/prefix/trailingslash/', (err, response) => {
+      assert(err === null);
+      assert(response.body === '/trailingslash/', '/trailingslash/ works');
+      done();
+    });
+  });
   it("base: undefined, prefix: '/prefix', path: '/user' => '/prefix/user'", (done) => {
     request.get('http://localhost:8080/prefix/user', (err, response) => {
       assert(err === null);
@@ -276,6 +339,7 @@ describe('hapi-route-loader /prefix as prefix', () => {
     });
   });
 });
+
 describe('hapi-route-loader.routeLoader function will also load routes', () => {
   let server;
   const options = {
