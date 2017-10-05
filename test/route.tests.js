@@ -327,7 +327,6 @@ describe('hapi-route-loader /prefix as prefix', () => {
   it("base: '', prefix: '/prefix', path: trailingslash/ => 'prefix/trailingslash/'", (done) => {
     request.get('http://localhost:8080/prefix/trailingslash/', (err, response) => {
       assert(err === null);
-      console.log(response.body)
       assert(response.body === '/trailingslash/', '/trailingslash/ works');
       done();
     });
