@@ -38,10 +38,6 @@ const getCompletePath = (options, fileName, originalPath) => {
   // if the originalPath started with a slash just return it, there is no basePath:
   if (_.startsWith(originalPath, '/')) {
     let resultPath = `${prefix}${originalPath}`;
-    if (_.endsWith(resultPath, '/') && resultPath !== '/') {
-      resultPath = resultPath.substr(0, resultPath.length - 1);
-    }
-
     return resultPath;
   }
   // otherwise add the basePath to the returnPath:
@@ -50,7 +46,9 @@ const getCompletePath = (options, fileName, originalPath) => {
   returnPath = `${prefix}${returnPath}`;
   // if there's a trailing slash, make sure it should be there:
   if (_.endsWith(returnPath, '/') && (!_.endsWith(basePath, '/') || basePath === '/') && returnPath !== '/') {
-    returnPath = returnPath.substr(0, returnPath.length - 1);
+    if (!_.endsWith(originalPath, '/')) {
+      returnPath = returnPath.substr(0, returnPath.length - 1);
+    }
   }
   if (_.startsWith(returnPath, '//')) {
     returnPath = returnPath.replace('//', '/');
