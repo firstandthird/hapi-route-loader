@@ -27,6 +27,7 @@ const setupServerPlugin = (options, routes, callback) => {
     });
   });
 };
+
 describe('hapi-route-loader base option omitted, undefined, blank, or does not exist', () => {
   let server;
 
@@ -46,6 +47,20 @@ describe('hapi-route-loader base option omitted, undefined, blank, or does not e
       request.get('http://localhost:8080/dashboard', (err, response) => {
         assert(err === null);
         assert(response.body === '/dashboard', '/dashboard as base');
+        server.stop(done);
+      });
+    });
+  });
+  it(" base: '', path: '/trailingslash/' => '/trailingslash/'", (done) => {
+    const options = {
+      base: '',
+      path: `${__dirname}/routes`
+    };
+    setupServerPlugin(options, [], (returnedServer) => {
+      server = returnedServer;
+      request.get('http://localhost:8080/trailingslash/', (err, response) => {
+        assert(err === null);
+        assert(response.body === '/trailingslash/', ' blank as base');
         server.stop(done);
       });
     });
@@ -111,6 +126,27 @@ describe('hapi-route-loader base option omitted, undefined, blank, or does not e
       });
     });
   });
+
+  it(" base: '', path: '/dashboard/' => '/dashboard/'", (done) => {
+    const options = {
+      base: '',
+      path: `${__dirname}/routes`
+    };
+    setupServerPlugin(options, [{
+      method: 'GET',
+      path: '/dashboard/',
+      handler: (launchRequest, reply) => {
+        reply('/dashboard/');
+      }
+    }], (returnedServer) => {
+      server = returnedServer;
+      request.get('http://localhost:8080/dashboard/', (err, response) => {
+        assert(err === null);
+        assert(response.body === '/dashboard/', '/dashboard/ as base');
+        server.stop(done);
+      });
+    });
+  });
 });
 
 describe('hapi-route-loader /dashboard base', () => {
@@ -132,6 +168,13 @@ describe('hapi-route-loader /dashboard base', () => {
     request.get('http://localhost:8080/dashboard/get', (err, response) => {
       assert(err === null);
       assert(response.body === '/get', 'dashboard/get works');
+      done();
+    });
+  });
+  it("base: '/dashboard', path: 'trailingslash/' => '/dashboard/trailingslash/' with trailing slash", (done) => {
+    request.get('http://localhost:8080/dashboard/trailingslash/', (err, response) => {
+      assert(err === null);
+      assert(response.body === '/trailingslash/', 'dashboard/trailingslash/ works');
       done();
     });
   });
@@ -175,7 +218,14 @@ describe('hapi-route-loader / base', () => {
   it(" base: '/', path: '/dashboard' => '/dashboard'", (done) => {
     request.get('http://localhost:8080/dashboard', (err, response) => {
       assert(err === null);
-      assert(response.body === '/dashboard', '/dashboard as base');
+      assert(response.body === '/dashboard', '/ as base');
+      done();
+    });
+  });
+  it(" base: '/', path: '/trailingslash/' => '/trailingslash/'", (done) => {
+    request.get('http://localhost:8080/trailingslash/', (err, response) => {
+      assert(err === null);
+      assert(response.body === '/trailingslash/', '/dashboard as base');
       done();
     });
   });
@@ -183,6 +233,31 @@ describe('hapi-route-loader / base', () => {
     request.post('http://localhost:8080/', {}, (err, response) => {
       assert(err === null);
       assert(response.body === 'preProcessed', 'config.pre is preserved');
+      done();
+    });
+  });
+});
+
+describe('hapi-route-loader can use function for config', () => {
+  let server;
+  const options = {
+    functionTestThingy: 'thingy',
+    base: '/',
+    path: `${__dirname}/functionRoutes`
+  };
+  beforeEach((done) => {
+    setupServerPlugin(options, [], (returnedServer) => {
+      server = returnedServer;
+      done();
+    });
+  });
+  afterEach((done) => {
+    server.stop(done);
+  });
+  it(" base: '/', path: '/get' => '/get'", (done) => {
+    request.get('http://localhost:8080/get', (err, response) => {
+      assert(err === null);
+      assert(response.body === `${server.version},${options.functionTestThingy}`, 'routeConfig accepts server/settings and returns config');
       done();
     });
   });
@@ -207,6 +282,13 @@ describe('hapi-route-loader /dashboard/ base', () => {
     request.get('http://localhost:8080/dashboard/', (err, response) => {
       assert(err === null);
       assert(response.body === '/', '/dashboard/ works');
+      done();
+    });
+  });
+  it("base: '/dashboard/', path: null => '/dashboard/'", (done) => {
+    request.get('http://localhost:8080/dashboard/trailingslash/', (err, response) => {
+      assert(err === null);
+      assert(response.body === '/trailingslash/', '/dashboard/trailingslash/ works');
       done();
     });
   });
@@ -242,6 +324,13 @@ describe('hapi-route-loader /prefix as prefix', () => {
       done();
     });
   });
+  it("base: '', prefix: '/prefix', path: trailingslash/ => 'prefix/trailingslash/'", (done) => {
+    request.get('http://localhost:8080/prefix/trailingslash/', (err, response) => {
+      assert(err === null);
+      assert(response.body === '/trailingslash/', '/trailingslash/ works');
+      done();
+    });
+  });
   it("base: undefined, prefix: '/prefix', path: '/user' => '/prefix/user'", (done) => {
     request.get('http://localhost:8080/prefix/user', (err, response) => {
       assert(err === null);
@@ -250,6 +339,7 @@ describe('hapi-route-loader /prefix as prefix', () => {
     });
   });
 });
+
 describe('hapi-route-loader.routeLoader function will also load routes', () => {
   let server;
   const options = {
@@ -317,6 +407,7 @@ describe('hapi-route-loader lets you specify routeConfig object for all routes',
     });
   });
 });
+
 describe('hapi-route-loader deeply nested route', () => {
   let server;
   it(" file: '/routes/api/test/test.js' => '/api/test'", (done) => {
