@@ -1,9 +1,50 @@
 const chai = require('chai');
 const assert = chai.assert;
+const validateRoutesDirectory = require('../lib/validateRoutesDirectory');
 const getRoutePathBase = require('../lib/getRoutePathBase');
 const getCompletePath = require('../lib/getCompletePath');
 const getRoutesFromFiles = require('../lib/getRoutesFromFiles');
 const configureRoute = require('../lib/configureRoute');
+
+describe('validateRoutesDirectory', () => {
+  it('logs if a directory does not exist', (done) => {
+    const server = {
+      log(tags, msg) {
+        assert(msg.message === 'path doesnt exist');
+      }
+    };
+    const settings = {
+      path: 'nonono'
+    };
+    validateRoutesDirectory(server, settings, (outcome) => {
+      done();
+    });
+  });
+  it('logs if a directory is actually a file', (done) => {
+    const server = {
+      log(tags, msg) {
+        assert(msg.message === 'path not a directory');
+      }
+    };
+    const settings = {
+      path: __filename
+    };
+    validateRoutesDirectory(server, settings, (outcome) => {
+      assert(outcome.indexOf('not a directory'));
+      done();
+    });
+  });
+  it('is fine with valid directories', (done) => {
+    const server = {};
+    const settings = {
+      path: __dirname
+    };
+    validateRoutesDirectory(server, settings, (outcome) => {
+      assert(outcome === undefined);
+      done();
+    });
+  });
+});
 
 describe('getCompletePath ', () => {
   it('get route when originalPath starts with /', (done) => {
