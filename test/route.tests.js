@@ -407,6 +407,7 @@ describe('hapi-route-loader lets you specify routeConfig object for all routes',
     });
   });
 });
+
 describe('hapi-route-loader deeply nested route', () => {
   let server;
   it(" file: '/routes/api/test/test.js' => '/api/test'", (done) => {
