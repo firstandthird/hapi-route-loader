@@ -13,10 +13,6 @@ const defaults = {
   autoLoad: true
 };
 
-exports.register = (server, options, next) => {
-  exports.routeLoader(server, options, next, true);
-};
-
 // the 'base' of the path for all routes defined in a given file.
 // eg "/api/folder1/myfile.js" will return "/api/folder/myfile/",
 const getRoutePathBase = (options, fileName) => {
@@ -56,7 +52,7 @@ const getCompletePath = (options, fileName, originalPath) => {
   return returnPath;
 };
 
-exports.routeLoader = (server, options, next) => {
+exports.routeLoader = (server, options) => {
   const load = (loadOptions, loadDone) => {
     const stub = () => {};
     loadDone = loadDone || stub;
@@ -141,11 +137,17 @@ exports.routeLoader = (server, options, next) => {
     });
   };
   if (options.autoLoad === false) {
-    return next();
+    return;
   }
-  load(options, next);
+  load(options);
 };
 
-exports.register.attributes = {
-  pkg: require('./package.json')
+function register (server, options) {
+  exports.routeLoader(server, options, true);
+}
+
+exports.plugin = {
+  once: true,
+  pkg: require('./package.json'),
+  register
 };
