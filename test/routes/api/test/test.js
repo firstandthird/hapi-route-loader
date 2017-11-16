@@ -1,6 +1,6 @@
 exports.test = {
   method: 'GET',
-  handler: function (request, reply) {
-    reply('/nested');
+  handler(request, h) {
+    return '/nested';
   }
 };

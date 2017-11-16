@@ -1,22 +1,22 @@
 exports.get = {
   method: 'GET',
   path: 'get',
-  handler: function (request, reply) {
-    reply('/get')
+  handler(request, h) {
+    return '/get';
   }
 };
 exports.trailingslash = {
   method: 'GET',
   path: 'trailingslash/',
-  handler: function (request, reply) {
-    reply('/trailingslash/');
+  handler(request, h) {
+    return '/trailingslash/';
   }
 };
 exports.none = {
   method: 'GET',
   path: null,
-  handler: function (request, reply) {
-    reply("/");
+  handler(request, h) {
+    return '/';
   }
 };
 exports.nonePost = {
@@ -24,29 +24,29 @@ exports.nonePost = {
   path: null,
   config: {
     pre: [{
-      method: function(request, reply) {
-        return reply('preProcessed');
+      method(request, h) {
+        return 'preProcessed';
       },
       assign: 'result'
     }]
   },
-  handler: function (request, reply) {
-    reply(request.pre.result);
+  handler(request, h) {
+    return request.pre.result;
   }
 };
 
 exports.param = {
   method: 'GET',
   path: '{id}',
-  handler: function (request, reply) {
-    reply('' + request.params.id);
+  handler(request, h) {
+    return request.params.id;
   }
 };
 exports.user = {
   method: 'GET',
-  path : "/user",
-  handler : function(request,reply){
-    reply("/user");
+  path: '/user',
+  handler(request, h) {
+    return '/user';
   }
 };
 
@@ -54,8 +54,8 @@ exports.vhostRoutes = {
   method: 'GET',
   path: '/',
   vhost: ['site.dev', 'site.com'],
-  handler: function(request, reply) {
-    reply('hello');
+  handler(request, h) {
+    return 'hello';
   }
 };
 
@@ -63,7 +63,7 @@ exports.vhostRoutes2 = {
   method: 'GET',
   path: '/',
   vhost: ['notasite.dev', 'notasite.com'],
-  handler: function(request, reply) {
-    reply('goodbye');
+  handler(request, h) {
+    return 'goodbye';
   }
 };
