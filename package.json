@@ -4,7 +4,7 @@
   "description": "Hapi plugin to auto load routes from a directory",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "tap test/**.test.js"
   },
   "repository": {
     "type": "git",
@@ -22,19 +22,14 @@
   "homepage": "https://github.com/firstandthird/hapi-route-loader#readme",
   "dependencies": {
     "async": "^2.1.2",
-    "chai": "^4.1.2",
     "glob": "^7.1.1",
-    "lodash": "^4.17.2",
-    "mocha": "^4.0.1"
+    "lodash": "^4.17.2"
   },
   "devDependencies": {
-    "code": "^5.1.2",
     "eslint": "^3.9.1",
     "eslint-config-firstandthird": "^3.2.0",
     "eslint-plugin-import": "^2.1.0",
     "hapi": "^17.0.0-rc9",
-    "lab": "^15.1.2",
-    "request": "^2.67.0",
     "tap": "^10.7.3"
   }
 }

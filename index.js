@@ -4,7 +4,7 @@ const glob = require('glob');
 const path = require('path');
 const _ = require('lodash');
 const async = require('async');
-
+const util = require('util');
 const defaults = {
   path: `${process.cwd()}/routes`,
   base: '/',
@@ -52,7 +52,7 @@ const getCompletePath = (options, fileName, originalPath) => {
   return returnPath;
 };
 
-exports.routeLoader = (server, options, next) => {
+exports.routeLoader = util.promisify((server, options, next) => {
   const load = (loadOptions, loadDone) => {
     const stub = () => {};
     loadDone = loadDone || stub;
@@ -140,10 +140,10 @@ exports.routeLoader = (server, options, next) => {
     return next();
   }
   load(options, next);
-};
+});
 
-function register (server, options) {
-  exports.routeLoader(server, options, () => {});
+async function register (server, options) {
+  await exports.routeLoader(server, options);
 }
 
 exports.plugin = {

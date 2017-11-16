@@ -1,16 +1,12 @@
 'use strict';
 const Hapi = require('hapi');
-const request = require('request');
 const routeLoader = require('../').routeLoader;
 const tap = require('tap');
 
-tap.test('hapi-route-loader lets you specify routeConfig object for all routes', (t) => {
+tap.test('hapi-route-loader lets you specify routeConfig object for all routes', async(t) => {
   let count = 0;
   const server = new Hapi.Server({ port: 8080 });
-  const start = async () => {
-    await server.start();
-  };
-  start();
+  await server.start();
   // this will be assigned to all routes
   const pre1 = (request) => {
     return 'global!';
@@ -26,13 +22,12 @@ tap.test('hapi-route-loader lets you specify routeConfig object for all routes',
       ]
     }
   };
-  routeLoader(server, options, async() => {
-    const response = await server.inject({
-      method: 'get',
-      url: 'http://localhost:8080/prefix/dashboard/get'
-    });
-    t.equal(response.result, 'global!');
-    await server.stop();
-    t.end();
+  await routeLoader(server, options);
+  const response = await server.inject({
+    method: 'get',
+    url: 'http://localhost:8080/prefix/dashboard/get'
   });
+  t.equal(response.result, 'global!');
+  await server.stop();
+  t.end();
 });
