@@ -59,9 +59,9 @@ exports.routeLoader = (server, options, next) => {
     const settings = _.clone(loadOptions);
     _.defaults(settings, defaults);
     // the main flow is here:
-    async.auto({
+    async.autoInject({
       // confirm that settings.path exists and is a directory:
-      confirmDirectoryExists: (done) => {
+      confirmDirectoryExists(done) {
         fs.exists(settings.path, (exists) => {
           if (!exists) {
             server.log(['hapi-route-loader', 'warning'], { message: 'path doesnt exist', path: settings.path });
@@ -80,7 +80,7 @@ exports.routeLoader = (server, options, next) => {
         });
       },
       // get the list of all matching route-containing files
-      files: ['confirmDirectoryExists', (results, done) => {
+      files(confirmDirectoryExists, done) {
         glob('**/*.js', {
           cwd: settings.path
         }, (globErr, files) => {
@@ -89,11 +89,11 @@ exports.routeLoader = (server, options, next) => {
           }
           done(null, files);
         });
-      }],
+      },
       // for each filename, get a list of configured routes defined by it
-      configureAllRoutes: ['files', (results, done) => {
+      configureAllRoutes(files, done) {
         const routeConfigs = {};
-        results.files.forEach((fileName) => {
+        files.forEach((fileName) => {
           const fileRouteList = [];
           const moduleRoutes = require(path.join(settings.path, fileName));
           _.forIn(moduleRoutes, (originalRouteConfig) => {
@@ -116,11 +116,11 @@ exports.routeLoader = (server, options, next) => {
           routeConfigs[fileName] = fileRouteList;
         });
         done(null, routeConfigs);
-      }],
+      },
       // register all routes with server.route:
-      registerAllRoutes: ['configureAllRoutes', (results, done) => {
-        Object.keys(results.configureAllRoutes).forEach((fileName) => {
-          results.configureAllRoutes[fileName].forEach((routeConfig) => {
+      registerAllRoutes(configureAllRoutes, done) {
+        Object.keys(configureAllRoutes).forEach((fileName) => {
+          configureAllRoutes[fileName].forEach((routeConfig) => {
             if (options.verbose) {
               server.log(['debug', 'hapi-route-loader'], { msg: 'registering', data: routeConfig });
             }
@@ -128,7 +128,7 @@ exports.routeLoader = (server, options, next) => {
           });
         });
         done();
-      }]
+      }
     }, (err2) => {
       if (err2) {
         server.log(['hapi-route-loader', 'error'], err2);
@@ -143,7 +143,7 @@ exports.routeLoader = (server, options, next) => {
 };
 
 function register (server, options) {
-  exports.routeLoader(server, options, true, () => {});
+  exports.routeLoader(server, options, () => {});
 }
 
 exports.plugin = {

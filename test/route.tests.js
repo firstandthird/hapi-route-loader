@@ -1,64 +1,81 @@
 /* eslint-disable no-undef*/
 'use strict';
-const chai = require('chai');
-const assert = chai.assert;
 const request = require('request');
 const Hapi = require('hapi');
 const routeLoader = require('../');
+const tap = require('tap');
 
-const setupServerPlugin = async (options, routes, callback) => {
+const setupServerPlugin = async (options, routes) => {
   const server = new Hapi.Server({ port: 8080 });
-  try {
-    await server.register({ plugin: routeLoader.plugin, options });
-    await server.start();
-    routes.forEach((route) => {
-      server.route(route);
-    });
-    callback(server);
-  } catch (e) {
-    console.log(e);
-  }
+  await server.register({ plugin: routeLoader.plugin, options });
+  routes.forEach((route) => {
+    server.route(route);
+  });
+  await server.start();
+  console.log('started')
+  console.log(Object.keys(server))
+  return server;
 };
 
-describe('hapi-route-loader base option omitted, undefined, blank, or does not exist', () => {
-  let server;
-
-  it(" base: '', path: '/dashboard' => '/dashboard'", (done) => {
-    const options = {
-      base: '',
-      path: `${__dirname}/routes`
-    };
-    setupServerPlugin(options, [{
-      method: 'GET',
-      path: '/dashboard',
-      handler: (launchRequest, reply) => {
-        reply('/dashboard');
-      }
-    }], (returnedServer) => {
-      server = returnedServer;
-      request.get('http://localhost:8080/dashboard', (err, response) => {
-        assert(err === null);
-        assert(response.body === '/dashboard', '/dashboard as base');
-        server.stop(done);
+// 'hapi-route-loader base option omitted, undefined, blank, or does not exist':
+  tap.test(" base: '', path: '/dashboard' => '/dashboard'", (t) => {
+    const run = async () => {
+      const options = {
+        base: '',
+        path: `${__dirname}/routes`
+      };
+      const routes = [{
+        method: 'GET',
+        path: '/dashboard',
+        handler: (launchRequest, h) => {
+          return '/dashboard';
+        }
+      }];
+      const server = new Hapi.Server({ port: 8080 });
+      await server.register({ plugin: routeLoader.plugin, options });
+      routes.forEach((route) => {
+        server.route(route);
       });
-    });
+      await server.start();
+      const response = await server.inject({
+        method: 'get',
+        url: 'http://localhost:8080/dashboard'
+      });
+      t.equal(response.result, '/dashboard', '/dashboard as base');
+      await server.stop();
+      t.end();
+    };
+    run();
+  });
+
+  tap.test(" base: '', path: '/trailingslash/' => '/trailingslash/'", (t) => {
+    const run = async () => {
+      const options = {
+        base: '',
+        path: `${__dirname}/routes`
+      };
+      console.log('server')
+      const server = new Hapi.Server({ port: 8080 });
+      console.log('launch server')
+      await server.register({ plugin: routeLoader.plugin, options });
+      // routes.forEach((route) => {
+      //   server.route(route);
+      // });
+      await server.start();
+      console.log('response')
+      const response = await server.inject({
+        method: 'get',
+        url: 'http://localhost:8080/trailingslash/'
+      });
+      console.log('come in')
+      // t.equal(response.result, '/trailingslash/', ' blank as base');
+      await server.stop(done);
+      t.end();
+    };
+    console.log('run')
+    run();
   });
 /*
-  it(" base: '', path: '/trailingslash/' => '/trailingslash/'", (done) => {
-    const options = {
-      base: '',
-      path: `${__dirname}/routes`
-    };
-    setupServerPlugin(options, [], (returnedServer) => {
-      server = returnedServer;
-      request.get('http://localhost:8080/trailingslash/', (err, response) => {
-        assert(err === null);
-        assert(response.body === '/trailingslash/', ' blank as base');
-        server.stop(done);
-      });
-    });
-  });
-
   it(" base: undefined, path: '/dashboard' => '/dashboard'", (done) => {
     const options = {
       base: undefined,
@@ -141,7 +158,7 @@ describe('hapi-route-loader base option omitted, undefined, blank, or does not e
     });
   });
 */
-});
+// });
 /*
 describe('hapi-route-loader /dashboard base', () => {
   let server;
