@@ -52,7 +52,7 @@ const getCompletePath = (options, fileName, originalPath) => {
   return returnPath;
 };
 
-exports.routeLoader = (server, options) => {
+exports.routeLoader = (server, options, next) => {
   const load = (loadOptions, loadDone) => {
     const stub = () => {};
     loadDone = loadDone || stub;
@@ -137,13 +137,13 @@ exports.routeLoader = (server, options) => {
     });
   };
   if (options.autoLoad === false) {
-    return;
+    return next();
   }
-  load(options);
+  load(options, next);
 };
 
 function register (server, options) {
-  exports.routeLoader(server, options, true);
+  exports.routeLoader(server, options, true, () => {});
 }
 
 exports.plugin = {
