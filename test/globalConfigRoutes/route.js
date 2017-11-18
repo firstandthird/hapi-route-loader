@@ -1,7 +1,7 @@
 exports.get = {
   path: 'get',
   method: 'GET',
-  handler: function (request, reply) {
-    reply(request.pre.m1);
+  handler(request, h) {
+    return request.pre.m1;
   }
 };

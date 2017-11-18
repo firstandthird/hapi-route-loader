@@ -1,38 +1,20 @@
 'use strict';
-const chai = require('chai');
-const assert = chai.assert;
 const Hapi = require('hapi');
-const request = require('request');
 const routeLoader = require('../').routeLoader;
+const tap = require('tap');
 
-const launchServer = function(server, port, options, done) {
-  options.path = `${__dirname}/globalConfigRoutes`;
-  server.connection({ port });
-  routeLoader(server, options, (err) => {
-    if (err) {
-      return done(err);
-    }
-    server.start((startErr) => {
-      if (startErr) {
-        console.log(startErr);
-        return done(startErr);
-      }
-      done();
-    });
-  });
-};
-
-describe('hapi-route-loader lets you specify routeConfig object for all routes', () => {
+tap.test('hapi-route-loader lets you specify routeConfig object for all routes', async(t) => {
   let count = 0;
-  const server = new Hapi.Server();
-  const port = 8080;
+  const server = new Hapi.Server({ port: 8080 });
+  await server.start();
   // this will be assigned to all routes
-  const pre1 = (request, reply) => {
-    return reply('global!');
+  const pre1 = (request) => {
+    return 'global!';
   }
   const options = {
     base: '/dashboard',
     prefix: '/prefix',
+    path: `${__dirname}/globalConfigRoutes`,
     // will merge with all route configs:
     routeConfig: {
       pre: [
@@ -40,19 +22,12 @@ describe('hapi-route-loader lets you specify routeConfig object for all routes',
       ]
     }
   };
-  before((done) => {
-    launchServer(server, port, options, done);
+  await routeLoader(server, options);
+  const response = await server.inject({
+    method: 'get',
+    url: 'http://localhost:8080/prefix/dashboard/get'
   });
-  after((done) => {
-    server.stop(() => {
-      done();
-    });
-  });
-  it('base: /dashboard, prefix: /prefix, path: get => /dashboard/get', (done) => {
-    request.get('http://localhost:8080/prefix/dashboard/get', (err, response) => {
-      assert(err === null);
-      assert(response.body === 'global!');
-      done();
-    });
-  });
+  t.equal(response.result, 'global!');
+  await server.stop();
+  t.end();
 });
