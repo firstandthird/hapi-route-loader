@@ -1,6 +1,6 @@
 {
   "name": "hapi-route-loader",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "description": "Hapi plugin to auto load routes from a directory",
   "main": "index.js",
   "scripts": {
