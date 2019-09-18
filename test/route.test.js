@@ -1,6 +1,6 @@
 /* eslint-disable no-undef*/
 'use strict';
-const Hapi = require('hapi');
+const Hapi = require('@hapi/hapi');
 const routeLoader = require('../');
 const tap = require('tap');
 
