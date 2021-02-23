@@ -134,4 +134,3 @@ specified at `/foo.js` it will be registered as `/api/foo` instead of `/foo`
     }
     ```
     will result in each route having the indicated pre method
-```
