@@ -82,7 +82,6 @@ exports.test = {
 
 Since the 'path' field is specified this creates a POST route at `/api/CallMe` instead of `/api/myRoute`
 
-```
 To register the plugin just do:
 
 ```javascript
@@ -95,7 +94,7 @@ await server.register({ plugin: routeLoader.plugin, options });
 
  ## Options (pass these to the plugin)
 
-- __path___
+- __path__
 
   the path to the directory containing your route files, default is the `/routes`
 directory in the current working directory (`process.cwd()`).  For example, setting
